@@ -20,7 +20,8 @@ The **Adaptive Market Strategy Agent** is an intelligent trading assistant that 
 - ** AI-Powered Market Regime Detection** - Classifies market conditions with 80%+ confidence
 - ** Dynamic Strategy Recommendations** - Suggests optimal trading strategies that adapt to current conditions
 - ** Live Stock Screening** - Identifies top stock picks across 4 strategy types with real-time scoring
-- *#  Adaptive Market Strategy Agent
+
+- ** Adaptive Market Strategy Agent **
 
 [![Made with Google Cloud](https://img.shields.io/badge/Made%20with-Google%20Cloud-4285f4)](https://cloud.google.com/)
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248)](https://www.mongodb.com/)
