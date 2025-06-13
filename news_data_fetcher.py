@@ -1,3 +1,4 @@
+import os
 import requests
 from pymongo import MongoClient
 from datetime import datetime, timedelta
@@ -337,9 +338,14 @@ class NewsDataFetcher:
 # Usage example
 if __name__ == "__main__":
     # Configuration - Replace with your actual keys
-    MONGO_CONNECTION = "mongodb+srv://marketagent:T9QjESNK8lunUoTU@adaptive-market-cluster.aganihz.mongodb.net/"
-    NEWSAPI_KEY = "24072d5660c04b3b990736cff17ebeb5"
+    MONGO_CONNECTION = os.environ.get('MONGODB_URI')
+    NEWSAPI_KEY = os.environ.get('NEWS_API_KEY')
     
+    #Check if environment variables are set
+    if not MONGO_CONNECTION or not NEWSAPI_KEY:
+	print("Error: Please set MONGODB_URI and NEWS_API_KEY environment variables")
+	exit(1)	
+
     # Initialize fetcher
     news_fetcher = NewsDataFetcher(MONGO_CONNECTION, NEWSAPI_KEY)
     
