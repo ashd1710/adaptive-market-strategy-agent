@@ -611,7 +611,7 @@ This project represents a scalable business opportunity in the fintech space. We
 
 ## ◘ Contact
 
-For more details feel free to connect with me on Linkedin (https://www.linkedin.com/in/ashishdeshpande17/)
+To know more, DM me on Linedin (https://www.linkedin.com/in/ashishdeshpande17/)
 ---
 
 *This technical architecture enables our vision: Start with retail traders, scale to institutional clients, powered by the most advanced cloud and database technologies available.*
