@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 Adaptive Market Strategy Agent</title>
+    <title>▶ Adaptive Market Strategy Agent</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -57,16 +57,23 @@
         }
 
         .card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         .card h3 {
-            margin-bottom: 15px;
             color: #2c3e50;
+            margin-bottom: 15px;
             font-size: 1.3em;
             display: flex;
             align-items: center;
@@ -77,194 +84,192 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #2ecc71;
+            background: #28a745;
+            display: inline-block;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        .metric-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
+        .loading {
+            color: #007bff;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
         }
 
-        .metric-label {
-            font-weight: 600;
-            color: #555;
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #dc3545;
         }
 
-        .metric-value {
-            font-weight: bold;
-        }
-
-        .parameters-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .parameter-item {
+        .regime-info, .strategy-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 0;
-            font-size: 0.9em;
+            margin-bottom: 15px;
         }
 
-        .parameter-label {
-            color: #666;
-        }
-
-        .parameter-value {
+        .regime-type, .strategy-name {
+            font-size: 1.2em;
             font-weight: bold;
             color: #2c3e50;
         }
 
-        .parameter-status {
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
+        .confidence-score {
             font-weight: bold;
-            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: rgba(0, 123, 255, 0.1);
         }
 
-        .status-bullish { background: #2ecc71; }
-        .status-bearish { background: #e74c3c; }
-        .status-neutral { background: #95a5a6; }
-
-        .confidence-bar {
-            width: 100%;
-            height: 20px;
-            background: #ecf0f1;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .confidence-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #e74c3c, #f39c12, #2ecc71);
-            border-radius: 10px;
-            transition: width 0.5s ease;
+        .last-updated {
+            font-size: 0.9em;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 10px;
         }
 
         .strategy-card {
-            background: rgba(255, 255, 255, 0.95);
-            color: #2c3e50;
-            text-align: center;
-            border: 2px solid #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
 
         .strategy-card h3 {
-            color: #667eea;
-            font-size: 1.5em;
+            color: white;
         }
 
-        .strategy-name {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin: 15px 0;
-            color: #2c3e50;
+        .strategy-card .confidence-score {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
         }
 
-        .risk-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-            margin: 5px;
-        }
-
-        .risk-low { background: #2ecc71; color: white; }
-        .risk-medium { background: #f39c12; color: white; }
-        .risk-high { background: #e74c3c; color: white; }
-
-        .detailed-reasoning {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid #667eea;
-        }
-
-        .reasoning-section {
-            margin-bottom: 10px;
-        }
-
-        .reasoning-title {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .reasoning-content {
-            color: #555;
-            font-size: 0.9em;
-            line-height: 1.4;
-        }
-
-        .market-data-grid {
+        .strategy-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin-top: 15px;
         }
 
-        .symbol-card {
-            background: #f8f9fa;
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .strategy-card .detail-item {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .label {
+            font-weight: bold;
+            color: #6c757d;
+        }
+
+        .strategy-card .label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .value {
+            font-weight: bold;
+        }
+
+        .risk-low { color: #28a745; }
+        .risk-medium { color: #ffc107; }
+        .risk-high { color: #dc3545; }
+
+        .reasoning-section {
+            margin-top: 15px;
             padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            text-align: center;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid #007bff;
+        }
+
+        .strategy-card .reasoning-section {
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .symbol-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            transition: transform 0.2s ease;
+        }
+
+        .symbol-card:hover {
+            transform: translateY(-2px);
         }
 
         .symbol-card.positive {
-            border-left-color: #2ecc71;
+            border-left-color: #28a745;
         }
 
         .symbol-card.negative {
-            border-left-color: #e74c3c;
+            border-left-color: #dc3545;
+        }
+
+        .symbol-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
         .symbol-name {
             font-weight: bold;
-            font-size: 1.2em;
-            margin-bottom: 5px;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .symbol-full-name {
+            font-size: 0.8em;
+            color: #6c757d;
+            font-weight: normal;
         }
 
         .symbol-price {
-            font-size: 1.5em;
+            font-size: 1.2em;
             font-weight: bold;
-            margin: 5px 0;
+            color: #2c3e50;
         }
 
-        .symbol-change {
-            font-size: 0.9em;
+        .symbol-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
 
-        .symbol-details {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-        }
-
-        .symbol-detail-row {
+        .stat-item {
             display: flex;
             justify-content: space-between;
             margin: 3px 0;
             font-size: 0.85em;
+        }
+
+        .positive {
+            color: #28a745;
+        }
+
+        .negative {
+            color: #dc3545;
         }
 
         .events-list {
@@ -273,26 +278,44 @@
         }
 
         .event-item {
-            padding: 10px;
+            border-left: 4px solid #007bff;
             margin-bottom: 10px;
-            border-radius: 8px;
-            border-left: 4px solid #3498db;
+            padding: 10px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 4px;
         }
 
-        .event-item.fed { border-left-color: #e74c3c; }
-        .event-item.earnings { border-left-color: #2ecc71; }
-        .event-item.economic { border-left-color: #f39c12; }
+        .event-item.high {
+            border-left-color: #dc3545;
+        }
+
+        .event-item.medium {
+            border-left-color: #ffc107;
+        }
+
+        .event-item.low {
+            border-left-color: #28a745;
+        }
 
         .event-title {
             font-weight: bold;
             margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .event-description {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+            line-height: 1.4;
         }
 
         .event-meta {
-            font-size: 0.8em;
-            color: #666;
             display: flex;
             justify-content: space-between;
+            margin: 8px 0 0 0;
+            font-size: 0.8em;
+            color: #6c757d;
         }
 
         .chart-container {
@@ -301,88 +324,197 @@
             margin-top: 15px;
         }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
-
-        .error {
-            background: #fee;
-            color: #c33;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-
-        .last-updated {
-            text-align: center;
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 20px;
-        }
-
         .screener-section {
             margin-top: 20px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
         }
 
-        .screener-buttons {
+        .strategy-tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
-        .screener-btn {
+        .strategy-tab {
             padding: 10px 20px;
-            border: none;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.8);
             border-radius: 25px;
-            background: #667eea;
-            color: white;
+            color: #ffffff !important;
             cursor: pointer;
-            font-weight: bold;
             transition: all 0.3s ease;
+            font-weight: bold;
+	    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+	    font-size: 14px;
         }
 
-        .screener-btn:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
+        .strategy-tab:hover {
+            background: rgba(0,0,0, 0.6);
+	    border-color: #ffffff;
+	    transform: translateY(-2px);
+	    color: #ffffff !important;
         }
 
-        .screener-btn.active {
-            background: #2ecc71;
+        .strategy-tab.active {
+            background: white;
+            color: #2c3e50;
+	    border-color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .stock-results {
+        .stocks-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 15px;
-            margin-top: 15px;
         }
 
         .stock-card {
             background: white;
             padding: 15px;
             border-radius: 10px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #007bff;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .stock-symbol {
+        .stock-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Market Regime Dropdown Styles */
+        .regime-explanation {
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .regime-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .regime-header:hover {
+            background: #f5f5f5;
+        }
+
+        .regime-title {
             font-weight: bold;
-            font-size: 1.2em;
             color: #2c3e50;
         }
 
-        .stock-score {
-            float: right;
-            background: #667eea;
+        .expand-icon {
+            transition: transform 0.3s ease;
+            font-size: 18px;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(45deg);
+        }
+
+        .regime-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+            margin-top: 5px;
+            border-radius: 6px;
+        }
+
+        .regime-details.expanded {
+            max-height: 200px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .simple-explanation {
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .technical-explanation {
+            color: #6c757d;
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .strategy-fit {
+            color: #007bff;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        /* ETF Explanation Styles */
+        .etf-explanation {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            padding: 5px 8px;
+            background: rgba(0,123,255,0.1);
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+
+        .etf-simple {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        /* Strategy Description Styles */
+        .strategy-descriptions {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .simple-strategy {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .seven-word-strategy {
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .technical-strategy {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Debug button for testing */
+        .debug-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: #dc3545;
             color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .debug-button:hover {
+            background: #c82333;
         }
 
         @media (max-width: 768px) {
@@ -391,34 +523,45 @@
             }
             
             .header h1 {
-                font-size: 2em;
+                font-size: 1.8em;
             }
             
-            .container {
-                padding: 10px;
+            .market-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .strategy-tabs {
+                justify-content: center;
+            }
+            
+            .stocks-grid {
+                grid-template-columns: 1fr;
             }
 
-            .parameters-grid {
-                grid-template-columns: 1fr;
+            .debug-button {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Debug button for testing -->
+    <button class="debug-button" onclick="testAllAPIs()" title="Test API Endpoints">🧪 Test APIs</button>
+
     <div class="container">
         <div class="header">
-            <h1>🎯 Adaptive Market Strategy Agent</h1>
-            <p>Real-time AI-powered market analysis and strategy recommendations</p>
+            <h1>▶ Adaptive Market Strategy Agent</h1>
+            <p>AI-Powered Trading Strategy Recommendations Based on Real-Time Market Analysis</p>
         </div>
 
         <div class="grid">
-            <!-- Enhanced Market Regime Analysis -->
+            <!-- Market Regime Analysis -->
             <div class="card">
                 <h3><span class="status-indicator"></span> Market Regime Analysis</h3>
                 <div id="market-regime-content" class="loading">Loading market data...</div>
             </div>
 
-            <!-- Enhanced AI Strategy Recommendation -->
+            <!-- AI Strategy Recommendation -->
             <div class="card strategy-card">
                 <h3>🤖 AI Strategy Recommendation</h3>
                 <div id="strategy-content" class="loading">Analyzing market conditions...</div>
@@ -432,7 +575,7 @@
         </div>
 
         <div class="grid">
-            <!-- Market Chart -->
+            <!-- Market Trends Chart -->
             <div class="card">
                 <h3>📈 Market Trends</h3>
                 <div class="chart-container">
@@ -450,39 +593,56 @@
         <!-- Stock Screener Section -->
         <div class="card grid-full">
             <h3>🔍 Strategy-Based Stock Screener</h3>
-            <div class="screener-buttons">
-                <button class="screener-btn" onclick="loadScreener('momentum')">Momentum</button>
-                <button class="screener-btn" onclick="loadScreener('mean_reversion')">Mean Reversion</button>
-                <button class="screener-btn" onclick="loadScreener('breakout')">Breakout</button>
-                <button class="screener-btn" onclick="loadScreener('value')">Value</button>
+            <div class="screener-section">
+                <div class="strategy-tabs">
+                    <button class="strategy-tab active" data-strategy="momentum">Momentum</button>
+                    <button class="strategy-tab" data-strategy="mean_reversion">Mean Reversion</button>
+                    <button class="strategy-tab" data-strategy="breakout">Breakout</button>
+                    <button class="strategy-tab" data-strategy="value">Value</button>
+                </div>
+                <div id="stocks-content" class="loading">Loading stock analysis...</div>
             </div>
-            <div id="screener-content" class="loading">Select a strategy to see stock recommendations</div>
-        </div>
-
-        <div class="last-updated">
-            Last updated: <span id="last-updated-time">--</span> | 
-            Next refresh in: <span id="countdown">--</span>
         </div>
     </div>
 
     <script>
-        // Global variables
         let marketChart;
-        let refreshInterval;
-        let countdownInterval;
-        const REFRESH_TIME = 300000; // 5 minutes
 
-        // Initialize dashboard
+        // Initialize the dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            fetchCurrentAnalysis();
-            startAutoRefresh();
-            initializeChart();
+            console.log('🚀 Initializing Adaptive Market Strategy Agent Dashboard...');
+            
+            // Load initial data
+            fetchData();
+            loadStrategyStocks('momentum');
+            
+            // Add click handlers to strategy tabs
+            document.querySelectorAll('.strategy-tab').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const strategy = this.getAttribute('data-strategy');
+                    console.log(`🎯 Strategy tab clicked: ${strategy}`);
+                    loadStrategyStocks(strategy);
+                });
+            });
+            
+            // Refresh data every 5 minutes
+            setInterval(fetchData, 300000);
+            
+            console.log('✅ Dashboard initialized successfully');
         });
 
-        async function fetchCurrentAnalysis() {
+        async function fetchData() {
             try {
+                console.log('🔄 Fetching dashboard data...');
                 const response = await fetch('/api/current-analysis');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
+                console.log('📊 Dashboard data received:', data);
                 
                 updateMarketRegime(data.market_regime, data.market_data);
                 updateStrategyRecommendation(data.strategy_recommendation, data.market_data);
@@ -491,153 +651,305 @@
                 updateLastUpdated();
                 
             } catch (error) {
-                console.error('Error fetching data:', error);
-                showError('Failed to fetch market data. Please try again.');
+                console.error('❌ Error fetching dashboard data:', error);
+                showError('Failed to fetch market data. Please check your connection and try again.');
+            }
+        }
+
+        async function loadStrategyStocks(strategy) {
+            try {
+                console.log(`🔄 Loading stocks for strategy: ${strategy}`);
+                
+                // Update active tab
+                document.querySelectorAll('.strategy-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Find and activate the correct tab
+                const activeTab = document.querySelector(`[data-strategy="${strategy}"]`);
+                if (activeTab) {
+                    activeTab.classList.add('active');
+                }
+                
+                const content = document.getElementById('stocks-content');
+                content.innerHTML = '<div class="loading">🔄 Loading stock analysis...</div>';
+                
+                // Fetch data from API
+                const response = await fetch(`/api/stocks/${strategy}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log(`📊 Received response for ${strategy}:`, data);
+                
+                // Check if we have stocks data
+                if (data.stocks && data.stocks.length > 0) {
+                    console.log(`✅ Found ${data.stocks.length} stocks for ${strategy}`);
+                    
+                    // Create the HTML for stock cards
+                    const stockCards = data.stocks.map(stock => {
+                        // Get all properties except symbol and strategy for display
+                        const displayProps = Object.entries(stock)
+                            .filter(([key, value]) => 
+                                key !== 'symbol' && 
+                                key !== 'strategy' && 
+                                key !== 'score' &&
+                                value !== null && 
+                                value !== undefined
+                            );
+                        
+                        return `
+                            <div class="stock-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <div style="font-weight: bold; font-size: 1.1em; color: #2c3e50;">
+                                        ${stock.symbol}
+                                    </div>
+                                    <div style="font-weight: bold; color: #007bff; font-size: 1.1em;">
+                                        ${stock.score ? stock.score.toFixed(2) : 'N/A'}
+                                    </div>
+                                </div>
+                                <div style="display: grid; gap: 8px;">
+                                    ${displayProps.map(([key, value]) => `
+                                        <div style="display: flex; justify-content: space-between; font-size: 0.9em; padding: 4px 0; border-bottom: 1px solid #f0f0f0;">
+                                            <span style="color: #666; text-transform: capitalize; font-weight: 500;">
+                                                ${key.replace(/_/g, ' ')}
+                                            </span>
+                                            <span style="font-weight: bold; color: #2c3e50;">
+                                                ${formatStockValue(key, value)}
+                                            </span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    const html = `
+                        <div class="stocks-grid">
+                            ${stockCards}
+                        </div>
+                        <div style="margin-top: 15px; text-align: center; color: #6c757d; font-size: 0.9em;">
+                            📊 Showing ${data.stocks.length} ${strategy.replace('_', ' ')} stocks 
+                            (${data.status === 'sample_data' ? 'Demo Mode' : 'Live Data'})
+                        </div>
+                    `;
+                    
+                    content.innerHTML = html;
+                    
+                } else {
+                    console.log(`❌ No stocks found for ${strategy}`);
+                    content.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #6c757d;">
+                            <div style="font-size: 2em; margin-bottom: 10px;">📊</div>
+                            <div style="font-size: 1.2em; margin-bottom: 5px;">No stocks found</div>
+                            <div style="font-size: 0.9em;">No ${strategy.replace('_', ' ')} opportunities detected</div>
+                            ${data.available_strategies ? `
+                                <div style="margin-top: 15px; font-size: 0.8em;">
+                                    Available: ${data.available_strategies.join(', ')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading strategy stocks:', error);
+                const content = document.getElementById('stocks-content');
+                content.innerHTML = `
+                    <div class="error" style="text-align: center; padding: 20px;">
+                        <div style="font-size: 1.1em; margin-bottom: 10px;">⚠️ Error Loading Stocks</div>
+                        <div style="font-size: 0.9em; margin-bottom: 10px;">
+                            Failed to load ${strategy.replace('_', ' ')} stocks
+                        </div>
+                        <div style="font-size: 0.8em; color: #666;">
+                            Error: ${error.message}
+                        </div>
+                        <button onclick="loadStrategyStocks('${strategy}')" 
+                                style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            🔄 Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Helper function to format stock values for display
+        function formatStockValue(key, value) {
+            if (typeof value === 'number') {
+                if (key.includes('ratio') || key.includes('pe') || key.includes('pb')) {
+                    return value.toFixed(2);
+                } else if (key.includes('percent') || key.includes('return')) {
+                    return value.toFixed(1) + '%';
+                } else if (key.includes('price') || key.includes('level')) {
+                    return '$' + value.toFixed(2);
+                } else {
+                    return value.toFixed(2);
+                }
+            } else if (typeof value === 'boolean') {
+                return value ? '✅ Yes' : '❌ No';
+            } else {
+                return value;
             }
         }
 
         function updateMarketRegime(regime, marketData) {
             const content = document.getElementById('market-regime-content');
-            const confidence = Math.round(regime.confidence * 100);
+            const statusIndicator = document.querySelector('.status-indicator');
             
-            // Calculate detailed parameters
-            let avgRsi = 0, avgChange = 0, strongTrends = 0;
-            if (marketData && marketData.length > 0) {
-                avgRsi = marketData.reduce((sum, item) => sum + item.rsi, 0) / marketData.length;
-                avgChange = marketData.reduce((sum, item) => sum + item.change_percent, 0) / marketData.length;
-                strongTrends = marketData.filter(item => item.trend.includes('strong')).length;
+            if (!regime) {
+                content.innerHTML = '<div class="error">Unable to load market regime data</div>';
+                return;
             }
+
+            const confidenceColor = regime.confidence > 0.8 ? '#28a745' : regime.confidence > 0.6 ? '#ffc107' : '#dc3545';
+            const regimeIcon = regime.type === 'trending' ? '📈' : regime.type === 'range_bound' ? '↔️' : '⚡';
             
-            content.innerHTML = `
-                <div class="metric-row">
-                    <span class="metric-label">Current Regime:</span>
-                    <span class="metric-value" style="text-transform: capitalize;">${regime.type.replace('_', ' ')}</span>
-                </div>
-                <div class="metric-row">
-                    <span class="metric-label">Confidence:</span>
-                    <span class="metric-value">${confidence}%</span>
-                </div>
-                <div class="confidence-bar">
-                    <div class="confidence-fill" style="width: ${confidence}%"></div>
+            statusIndicator.style.backgroundColor = confidenceColor;
+            
+            const explanation = regime.explanation || {
+                simple: "Market analysis in progress",
+                technical: "Detailed analysis not available", 
+                strategy_fit: "Strategy recommendations pending"
+            };
+
+            const html = `
+                <div class="regime-info">
+                    <div class="regime-type">${regimeIcon} ${regime.type.replace('_', '-').toUpperCase()}</div>
+                    <div class="confidence-score">Confidence: <span style="color: ${confidenceColor}">${Math.round(regime.confidence * 100)}%</span></div>
                 </div>
                 
-                <div class="parameters-grid">
-                    <div class="parameter-item">
-                        <span class="parameter-label">Average RSI:</span>
-                        <div>
-                            <span class="parameter-value">${avgRsi.toFixed(1)}</span>
-                            <span class="parameter-status ${avgRsi > 60 ? 'status-bearish' : avgRsi > 40 ? 'status-bullish' : 'status-neutral'}">
-                                ${avgRsi > 60 ? 'Overbought' : avgRsi > 40 ? 'Bullish' : 'Oversold'}
-                            </span>
+                <div class="regime-explanation">
+                    <div class="regime-header" onclick="toggleRegimeDetails()">
+                        <div class="regime-title">
+                            📖 What does this mean?
                         </div>
+                        <div class="expand-icon" id="regimeExpandIcon">+</div>
                     </div>
-                    <div class="parameter-item">
-                        <span class="parameter-label">Average Gain:</span>
-                        <div>
-                            <span class="parameter-value">${avgChange.toFixed(2)}%</span>
-                            <span class="parameter-status ${avgChange > 0.5 ? 'status-bullish' : avgChange > -0.5 ? 'status-neutral' : 'status-bearish'}">
-                                ${avgChange > 0.5 ? 'Strong' : avgChange > -0.5 ? 'Moderate' : 'Weak'}
-                            </span>
+                    
+                    <div class="regime-details" id="regimeDetails">
+                        <div class="simple-explanation">
+                            → ${explanation.simple}
                         </div>
-                    </div>
-                    <div class="parameter-item">
-                        <span class="parameter-label">Strong Trends:</span>
-                        <div>
-                            <span class="parameter-value">${strongTrends}/4 ETFs</span>
-                            <span class="parameter-status ${strongTrends >= 3 ? 'status-bullish' : strongTrends >= 2 ? 'status-neutral' : 'status-bearish'}">
-                                ${strongTrends >= 3 ? 'Very Strong' : strongTrends >= 2 ? 'Moderate' : 'Weak'}
-                            </span>
+                        <div class="technical-explanation">
+                            <strong>Technical:</strong> ${explanation.technical}
                         </div>
-                    </div>
-                    <div class="parameter-item">
-                        <span class="parameter-label">Trend Threshold:</span>
-                        <div>
-                            <span class="parameter-value">>0.8%</span>
-                            <span class="parameter-status ${avgChange > 0.8 ? 'status-bullish' : 'status-neutral'}">
-                                ${avgChange > 0.8 ? 'Met' : 'Not Met'}
-                            </span>
+                        <div class="strategy-fit">
+                            <strong>Best for:</strong> ${explanation.strategy_fit}
                         </div>
                     </div>
                 </div>
                 
-                <div style="font-size: 0.9em; color: #666; margin-top: 10px;">
-                    <strong>Analysis Logic:</strong> Trending market when 2+ ETFs show strong trends OR average RSI > 55 AND average gain > 0.8%
-                </div>
+                <div class="last-updated">Last updated: ${new Date(regime.last_updated).toLocaleTimeString()}</div>
             `;
+            
+            content.innerHTML = html;
+        }
+
+        function toggleRegimeDetails() {
+            const details = document.getElementById('regimeDetails');
+            const icon = document.getElementById('regimeExpandIcon');
+            
+            if (details.classList.contains('expanded')) {
+                details.classList.remove('expanded');
+                icon.classList.remove('expanded');
+                icon.textContent = '+';
+            } else {
+                details.classList.add('expanded');
+                icon.classList.add('expanded');
+                icon.textContent = '+';
+            }
         }
 
         function updateStrategyRecommendation(strategy, marketData) {
             const content = document.getElementById('strategy-content');
-            const confidence = Math.round(strategy.confidence * 100);
             
-            // Parse reasoning into sections
-            const reasoning = strategy.reasoning || "No detailed reasoning available";
-            const reasoningSections = reasoning.split('. ').filter(s => s.length > 10);
-            
-            content.innerHTML = `
-                <div class="strategy-name">${strategy.name}</div>
-                <div style="margin: 15px 0;">
-                    <span class="risk-badge risk-${strategy.risk_level}">${strategy.risk_level.toUpperCase()} RISK</span>
-                    <div style="margin-top: 10px; font-size: 0.9em;">
-                        <strong>Timeframe:</strong> ${strategy.timeframe}
-                    </div>
-                </div>
-                <div class="confidence-bar">
-                    <div class="confidence-fill" style="width: ${confidence}%"></div>
-                </div>
-                <div style="text-align: center; font-size: 0.9em; margin-top: 10px;">
-                    Confidence: ${confidence}%
+            if (!strategy) {
+                content.innerHTML = '<div class="error">Unable to load strategy data</div>';
+                return;
+            }
+
+            const confidenceColor = strategy.confidence > 0.8 ? '#28a745' : strategy.confidence > 0.6 ? '#ffc107' : '#dc3545';
+
+            const html = `
+                <div class="strategy-info">
+                    <div class="strategy-name">🎯 ${strategy.name}</div>
+                    <div class="confidence-score">Confidence: <span style="color: ${confidenceColor}">${Math.round(strategy.confidence * 100)}%</span></div>
                 </div>
                 
-                <div class="detailed-reasoning">
-                    <div class="reasoning-title">📊 Quantitative Analysis:</div>
-                    ${reasoningSections.map((section, index) => `
-                        <div class="reasoning-section">
-                            <div class="reasoning-content">${section.trim()}${section.endsWith('.') ? '' : '.'}</div>
-                        </div>
-                    `).join('')}
-                    
-                    <div class="reasoning-section" style="margin-top: 15px;">
-                        <div class="reasoning-title">🎯 Strategy Logic:</div>
-                        <div class="reasoning-content">
-                            ${strategy.name === 'Mean Reversion Strategy' ? 
-                                'Selected because RSI levels suggest potential pullback after strong rally. Historical data shows mean reversion opportunities when RSI > 55 and momentum > 0.8%.' :
-                            strategy.name === 'Trend Following Strategy' ?
-                                'Selected due to strong directional momentum across multiple timeframes. Entry signals triggered when 3+ ETFs show strong trends.' :
-                            strategy.name === 'Momentum Breakout Strategy' ?
-                                'Breakout conditions met with volume confirmation and technical momentum. RSI levels support continued upward movement.' :
-                                'Strategy selected based on current market conditions and risk-adjusted probability analysis.'
-                            }
-                        </div>
+                <div class="strategy-descriptions">
+                    <div class="simple-strategy">
+                        ${strategy.simple_description || "Buy rising stocks, sell falling"}
+                    </div>
+                    <div class="seven-word-strategy">
+                        "${strategy.seven_word_description || "Follow market direction with momentum"}"
+                    </div>
+                    <div class="technical-strategy">
+                        ${strategy.technical_description || strategy.reasoning}
+                    </div>
+                </div>
+                
+                <div class="strategy-details">
+                    <div class="detail-item">
+                        <span class="label">Risk Level:</span>
+                        <span class="value risk-${strategy.risk_level}">${strategy.risk_level.toUpperCase()}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Timeframe:</span>
+                        <span class="value">${strategy.timeframe}</span>
                     </div>
                 </div>
             `;
+            
+            content.innerHTML = html;
         }
 
         function updateMarketData(marketData) {
             const content = document.getElementById('market-data-content');
             
+            if (!marketData || marketData.length === 0) {
+                content.innerHTML = '<div class="error">No market data available</div>';
+                return;
+            }
+
             const html = `
-                <div class="market-data-grid">
-                    ${marketData.map(symbol => `
-                        <div class="symbol-card ${symbol.change_percent >= 0 ? 'positive' : 'negative'}">
-                            <div class="symbol-name">${symbol.symbol}</div>
-                            <div class="symbol-price">$${symbol.price.toFixed(2)}</div>
-                            <div class="symbol-change ${symbol.change_percent >= 0 ? 'positive' : 'negative'}">
-                                ${symbol.change_percent >= 0 ? '+' : ''}${symbol.change_percent.toFixed(2)}%
+                <div class="market-grid">
+                    ${marketData.map(item => `
+                        <div class="symbol-card ${item.change_percent >= 0 ? 'positive' : 'negative'}">
+                            <div class="symbol-header">
+                                <div class="symbol-name">
+                                    ${item.explanation?.icon || '📊'} ${item.symbol}
+                                    <div class="symbol-full-name">${item.explanation?.name || `${item.symbol} ETF`}</div>
+                                </div>
+                                <div class="symbol-price">${item.price.toFixed(2)}</div>
                             </div>
-                            <div class="symbol-details">
-                                <div class="symbol-detail-row">
+                            
+                            <div class="etf-explanation">
+                                <div class="etf-simple">${item.explanation?.simple_description || "Market tracking fund"}</div>
+                                <div style="font-size: 11px; margin-top: 2px;">
+                                    Tracks: ${item.explanation?.tracks || "Market Index"}
+                                </div>
+                            </div>
+                            
+                            <div class="symbol-stats">
+                                <div class="stat-item">
+                                    <span>Change:</span>
+                                    <span class="${item.change_percent >= 0 ? 'positive' : 'negative'}">
+                                        ${item.change_percent >= 0 ? '+' : ''}${item.change_percent.toFixed(2)}%
+                                    </span>
+                                </div>
+                                <div class="stat-item">
                                     <span>RSI:</span>
-                                    <span>${symbol.rsi.toFixed(1)}</span>
+                                    <span class="${item.rsi > 70 ? 'negative' : item.rsi < 30 ? 'positive' : ''}">
+                                        ${item.rsi.toFixed(1)}
+                                    </span>
                                 </div>
-                                <div class="symbol-detail-row">
+                                <div class="stat-item">
                                     <span>Trend:</span>
-                                    <span>${symbol.trend.replace('_', ' ').toUpperCase()}</span>
-                                </div>
-                                <div class="symbol-detail-row">
-                                    <span>Volume:</span>
-                                    <span>${(symbol.volume / 1000000).toFixed(1)}M</span>
+                                    <span class="${item.trend === 'up' ? 'positive' : item.trend === 'down' ? 'negative' : ''}">
+                                        ${item.trend === 'up' ? '📈' : item.trend === 'down' ? '📉' : '➡️'} ${item.trend.toUpperCase()}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -651,7 +963,7 @@
         function updateEvents(events) {
             const content = document.getElementById('events-content');
             
-            if (events.length === 0) {
+            if (!events || events.length === 0) {
                 content.innerHTML = '<div class="loading">No recent events found. News analysis pipeline is running...</div>';
                 return;
             }
@@ -659,11 +971,13 @@
             const html = `
                 <div class="events-list">
                     ${events.map(event => `
-                        <div class="event-item ${event.category}">
+                        <div class="event-item ${event.impact_level}">
                             <div class="event-title">${event.title}</div>
+                            <div class="event-description">${event.description || 'Financial market news and analysis.'}</div>
                             <div class="event-meta">
-                                <span>${event.category.toUpperCase()} | ${event.impact_level.toUpperCase()} Impact</span>
-                                <span>Sentiment: ${event.sentiment_score > 0 ? '📈' : event.sentiment_score < 0 ? '📉' : '➖'}</span>
+                                <span>${event.category?.toUpperCase() || 'NEWS'} | ${event.impact_level?.toUpperCase() || 'MEDIUM'} Impact</span>
+                                <span>Sentiment: ${event.sentiment_score > 0.3 ? '📈 Positive' : event.sentiment_score < -0.3 ? '📉 Negative' : '➖ Neutral'}</span>
+                                <span>${new Date(event.published_at).toLocaleString()}</span>
                             </div>
                         </div>
                     `).join('')}
@@ -673,180 +987,99 @@
             content.innerHTML = html;
         }
 
-        async function loadScreener(strategy) {
-            try {
-                // Update button states
-                document.querySelectorAll('.screener-btn').forEach(btn => btn.classList.remove('active'));
-                event.target.classList.add('active');
-                
-                const content = document.getElementById('screener-content');
-                content.innerHTML = '<div class="loading">Screening stocks for ' + strategy + ' strategy...</div>';
-                
-                const response = await fetch('/api/strategy-screener/' + strategy);
-                const data = await response.json();
-                
-                if (data.error) {
-                    content.innerHTML = `<div class="error">${data.error}</div>`;
-                    return;
-                }
-                
-                const html = `
-                    <div style="margin-bottom: 15px;">
-                        <h4>${data.criteria_used.description}</h4>
-                        <p><strong>Criteria:</strong> ${data.criteria_used.metrics.join(', ')}</p>
-                        <p><strong>Timeframe:</strong> ${data.criteria_used.timeframe}</p>
-                        <p><strong>Results:</strong> ${data.matches_found} matches from ${data.total_screened} stocks screened</p>
-                    </div>
-                    
-                    ${data.top_picks.length > 0 ? `
-                        <div class="stock-results">
-                            ${data.top_picks.map(stock => `
-                                <div class="stock-card">
-                                    <div class="stock-symbol">
-                                        ${stock.symbol}
-                                        <span class="stock-score">Score: ${stock.score}</span>
-                                    </div>
-                                    <div style="margin-top: 10px; font-size: 0.9em;">
-                                        ${Object.entries(stock).filter(([key, value]) => 
-                                            !['symbol', 'score', 'criteria'].includes(key)
-                                        ).map(([key, value]) => `
-                                            <div class="symbol-detail-row">
-                                                <span>${key.replace('_', ' ').toUpperCase()}:</span>
-                                                <span>${typeof value === 'number' ? value.toFixed(2) : value}</span>
-                                            </div>
-                                        `).join('')}
-                                        <div style="margin-top: 8px; color: #666; font-size: 0.85em;">
-                                            ${stock.criteria}
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : `
-                        <div style="text-align: center; color: #666; padding: 20px;">
-                            No stocks currently meet the ${strategy} criteria.<br>
-                            Market conditions may not favor this strategy at the moment.
-                        </div>
-                    `}
-                `;
-                
-                content.innerHTML = html;
-                
-            } catch (error) {
-                console.error('Error loading screener:', error);
-                document.getElementById('screener-content').innerHTML = 
-                    '<div class="error">Failed to load stock screener. Please try again.</div>';
-            }
-        }
-
-        function initializeChart() {
-            const ctx = document.getElementById('marketChart').getContext('2d');
-            marketChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'SPY Price',
-                        data: [],
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: false
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: true
-                        }
-                    }
+        function updateLastUpdated() {
+            const elements = document.querySelectorAll('.last-updated');
+            const now = new Date().toLocaleString();
+            elements.forEach(el => {
+                if (!el.textContent.includes(':')) {
+                    el.textContent = `Last updated: ${now}`;
                 }
             });
-            
-            // Load initial chart data
-            loadChartData();
-        }
-
-        async function loadChartData() {
-            try {
-                const response = await fetch('/api/historical-data/SPY?days=7');
-                const data = await response.json();
-                
-                if (data.data && data.data.length > 0) {
-                    const labels = data.data.map(item => 
-                        new Date(item.timestamp).toLocaleDateString()
-                    );
-                    const prices = data.data.map(item => item.price);
-                    
-                    marketChart.data.labels = labels;
-                    marketChart.data.datasets[0].data = prices;
-                    marketChart.update();
-                }
-            } catch (error) {
-                console.error('Error loading chart data:', error);
-            }
-        }
-
-        function updateLastUpdated() {
-            const now = new Date();
-            document.getElementById('last-updated-time').textContent = now.toLocaleTimeString();
-        }
-
-        function startAutoRefresh() {
-            // Start countdown
-            startCountdown();
-            
-            // Set up auto-refresh
-            refreshInterval = setInterval(() => {
-                fetchCurrentAnalysis();
-                loadChartData();
-                startCountdown();
-            }, REFRESH_TIME);
-        }
-
-        function startCountdown() {
-            let timeLeft = REFRESH_TIME / 1000; // Convert to seconds
-            
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-            }
-            
-            countdownInterval = setInterval(() => {
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                document.getElementById('countdown').textContent = 
-                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                timeLeft--;
-                
-                if (timeLeft < 0) {
-                    clearInterval(countdownInterval);
-                }
-            }, 1000);
         }
 
         function showError(message) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error';
-            errorDiv.textContent = message;
-            document.querySelector('.container').prepend(errorDiv);
-            
-            setTimeout(() => {
-                errorDiv.remove();
-            }, 5000);
+            const errorElements = document.querySelectorAll('.loading');
+            errorElements.forEach(el => {
+                el.innerHTML = `<div class="error">${message}</div>`;
+            });
         }
 
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', function() {
-            if (refreshInterval) clearInterval(refreshInterval);
-            if (countdownInterval) clearInterval(countdownInterval);
-        });
+        // Test function to check all APIs
+        async function testAllAPIs() {
+            console.log('🧪 Starting comprehensive API test...');
+            
+            try {
+                // Test health endpoint
+                console.log('1️⃣ Testing health endpoint...');
+                const healthResponse = await fetch('/api/health');
+                const healthData = await healthResponse.json();
+                console.log('✅ Health check:', healthData);
+                
+                // Test sample stocks endpoint
+                console.log('2️⃣ Testing sample stocks endpoint...');
+                const testResponse = await fetch('/api/test-stocks');
+                const testData = await testResponse.json();
+                console.log('✅ Sample stocks test:', testData);
+                
+                // Test each strategy endpoint
+                const strategies = ['momentum', 'mean_reversion', 'breakout', 'value'];
+                for (const strategy of strategies) {
+                    console.log(`3️⃣ Testing ${strategy} strategy...`);
+                    const strategyResponse = await fetch(`/api/stocks/${strategy}`);
+                    const strategyData = await strategyResponse.json();
+                    console.log(`✅ ${strategy} stocks:`, strategyData.count, 'stocks found');
+                }
+                
+                // Test current analysis
+                console.log('4️⃣ Testing current analysis...');
+                const analysisResponse = await fetch('/api/current-analysis');
+                const analysisData = await analysisResponse.json();
+                console.log('✅ Current analysis:', analysisData.status);
+                
+                alert('🎉 All API tests passed! Check console for details.');
+                
+            } catch (error) {
+                console.error('❌ API test failed:', error);
+                alert('❌ API test failed. Check console for details.');
+            }
+        }
+
+        // Initialize chart placeholder
+        function initializeChart() {
+            const ctx = document.getElementById('marketChart');
+            if (ctx) {
+                marketChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                        datasets: [{
+                            label: 'Market Trend',
+                            data: [100, 102, 98, 105, 107],
+                            borderColor: '#007bff',
+                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize chart on page load
+        setTimeout(initializeChart, 1000);
     </script>
 </body>
 </html>

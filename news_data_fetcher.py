@@ -343,8 +343,8 @@ if __name__ == "__main__":
     
     #Check if environment variables are set
     if not MONGO_CONNECTION or not NEWSAPI_KEY:
-	print("Error: Please set MONGODB_URI and NEWS_API_KEY environment variables")
-	exit(1)	
+        print("Error: Please set MONGODB_URI and NEWS_API_KEY environment variables")
+        exit(1)    
 
     # Initialize fetcher
     news_fetcher = NewsDataFetcher(MONGO_CONNECTION, NEWSAPI_KEY)
