@@ -6,3 +6,5 @@ __pycache__/
 demo_cache_*.json
 
 *.log
+*.backup
+*.old
