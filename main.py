@@ -22,18 +22,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# MongoDB connection
-MONGODB_URI = os.getenv('MONGODB_URI', 'your_connection_string_here')
+# MongoDB connection with proper boolean flag
+MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb+srv://marketagent:TtKjfDI5AKAjhQTy@adaptive-market-cluster.aganihz.mongodb.net/adaptive_market_db?retryWrites=true&w=majority&appName=adaptive-market-cluster')
+mongodb_connected = False
+client = None
+db = None
+
 try:
     client = pymongo.MongoClient(MONGODB_URI)
     db = client.adaptive_market_db
     # Test connection
     client.admin.command('ping')
+    mongodb_connected = True
     print("✅ MongoDB connection successful")
 except Exception as e:
     print(f"❌ MongoDB connection failed: {e}")
     client = None
     db = None
+    mongodb_connected = False
 
 # Initialize news fetcher (optional)
 NEWS_API_KEY = os.getenv('NEWS_API_KEY', 'demo')
@@ -248,7 +254,7 @@ async def health_check():
     return {
         "status": "healthy", 
         "timestamp": datetime.now().isoformat(),
-        "mongodb_connected": db is not None,
+        "mongodb_connected": mongodb_connected,
         "sample_strategies": list(SAMPLE_STOCKS.keys())
     }
 
@@ -345,27 +351,28 @@ async def get_current_analysis():
     """Get the latest market analysis and strategy recommendation"""
     try:
         # Get latest market conditions
-        if db:
-            latest_market = db.market_conditions.find().sort("timestamp", -1).limit(4)
-            market_data = list(latest_market)
+        if mongodb_connected and db is not None:
+            latest_market = list(db.market_conditions.find().sort("timestamp", -1).limit(4))
             
             # Get latest strategy recommendation
             latest_strategy = db.strategies.find_one(sort=[("timestamp", -1)])
         else:
-            market_data = []
+            latest_market = []
             latest_strategy = None
 
         # If no DB data, use sample data
-        if not market_data:
+        if not latest_market:
             print("📊 Using sample market data")
             market_data = SAMPLE_MARKET_DATA
+        else:
+            market_data = latest_market
         
         # Always fetch fresh real news for demo
         print("🔄 Fetching real-time financial news...")
         recent_events = await fetch_real_news_direct()
 
         # If direct fetch fails, try database
-        if not recent_events and db:
+        if not recent_events and mongodb_connected and db is not None:
             print("📊 Checking database for stored news...")
             db_events = list(db.events.find().sort("published_at", -1).limit(5))
             if db_events:
@@ -496,7 +503,7 @@ async def get_strategy_stocks(strategy_type: str):
     
     try:
         # Try MongoDB first (but expect it to fail in demo)
-        if db:
+        if mongodb_connected and db is not None:
             print(f"📊 Checking MongoDB for {strategy_type} stocks...")
             stocks_cursor = db.stock_analysis.find({"strategy": strategy_type}).sort("score", -1).limit(20)
             stocks = list(stocks_cursor)
@@ -545,7 +552,7 @@ async def test_sample_stocks():
         "available_strategies": list(SAMPLE_STOCKS.keys()),
         "sample_counts": {strategy: len(stocks) for strategy, stocks in SAMPLE_STOCKS.items()},
         "sample_momentum_stocks": SAMPLE_STOCKS["momentum"][:3],  # First 3 for testing
-        "mongodb_connected": db is not None,
+        "mongodb_connected": mongodb_connected,
         "status": "test_successful"
     }
 
@@ -565,7 +572,7 @@ async def get_historical_data(symbol: str, days: int = 30):
         start_date = datetime.now() - timedelta(days=days)
         
         # Try to get from your existing data source
-        if db:
+        if mongodb_connected and db is not None:
             historical_data = list(db.historical_data.find({
                 "symbol": symbol,
                 "date": {"$gte": start_date}
@@ -596,5 +603,5 @@ if __name__ == "__main__":
     import uvicorn
     print("🚀 Starting Adaptive Market Strategy Agent...")
     print(f"📊 Available strategies: {list(SAMPLE_STOCKS.keys())}")
-    print(f"🔗 MongoDB connected: {db is not None}")
+    print(f"🔗 MongoDB connected: {mongodb_connected}")
     uvicorn.run(app, host="0.0.0.0", port=8000)
