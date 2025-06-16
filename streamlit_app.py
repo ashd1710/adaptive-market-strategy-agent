@@ -59,7 +59,10 @@ st.markdown("""
 @st.cache_resource
 def init_mongodb():
     try:
-        MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb+srv://marketagent:TtKjfDI5AKAjhQTy@adaptive-market-cluster.aganihz.mongodb.net/?retryWrites=true&w=majority&appName=adaptive-market-cluster')
+        MONGODB_URI = os.getenv('MONGODB_URI')
+        if not MONGODB_URI:
+            st.error("❌ MongoDB connection not configured. Please add MONGODB_URI to your environment variables.")
+            st.stop()
         client = pymongo.MongoClient(MONGODB_URI)
         db = client.adaptive_market_db
         client.admin.command('ping')
@@ -119,7 +122,7 @@ SAMPLE_NEWS = [
 # Fetch real news function
 @st.cache_data(ttl=300)  # Cache for 5 minutes
 def fetch_real_news():
-    api_key = os.getenv('NEWS_API_KEY', '24072d5660c04b3b990736cff17ebeb5')
+    api_key = os.getenv('NEWS_API_KEY', 'demo')
     if api_key == 'demo':
         return SAMPLE_NEWS
     
