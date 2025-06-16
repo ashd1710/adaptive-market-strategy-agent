@@ -604,4 +604,18 @@ if __name__ == "__main__":
     print("🚀 Starting Adaptive Market Strategy Agent...")
     print(f"📊 Available strategies: {list(SAMPLE_STOCKS.keys())}")
     print(f"🔗 MongoDB connected: {mongodb_connected}")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    print(f"🌐 Running on port: {port}")
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    import os
+    
+    # Cloud Run sets PORT environment variable
+    port = int(os.environ.get("PORT", 8000))
+    
+    print(f"🚀 Starting Adaptive Market Strategy Agent on port {port}")
+    print(f"📊 MongoDB URI configured: {bool(os.environ.get('MONGODB_URI'))}")
+    print(f"📰 News API configured: {bool(os.environ.get('NEWS_API_KEY'))}")
+    uvicorn.run(app, host="0.0.0.0", port=port)
