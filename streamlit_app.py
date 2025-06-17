@@ -7,6 +7,40 @@ from datetime import datetime, timedelta
 import os
 import requests
 import time
+import random 
+
+@st.cache_data(ttl=60)  # Cache for 1 minute
+def get_dynamic_market_data():
+    """Make sample data change slightly to simulate live updates"""
+    market_data = []
+    for item in SAMPLE_MARKET_DATA:
+        new_item = item.copy()
+        # Add small random changes
+        price_change = random.uniform(-2, 2)
+        new_item['price'] += price_change
+        new_item['change_percent'] += random.uniform(-0.3, 0.3)
+        new_item['rsi'] += random.uniform(-5, 5)
+        # Keep RSI in valid range
+        new_item['rsi'] = max(10, min(90, new_item['rsi']))
+        market_data.append(new_item)
+    
+    return market_data
+
+@st.cache_data(ttl=60)  # Cache for 1 minute  
+def get_dynamic_stock_data(strategy_type):
+    """Make stock data change slightly"""
+    stocks = SAMPLE_STOCKS.get(strategy_type, [])
+    dynamic_stocks = []
+    
+    for stock in stocks:
+        new_stock = stock.copy()
+        # Vary the score slightly
+        new_stock['score'] += random.uniform(-0.5, 0.5)
+        new_stock['score'] = max(0, new_stock['score'])  # Keep positive
+        dynamic_stocks.append(new_stock)
+    
+    return dynamic_stocks
+
 
 # Page configuration
 st.set_page_config(
@@ -216,9 +250,10 @@ def main():
     
     # Live Market Data
     st.markdown("### 📈 Live Market Data")
+    market_data = get_dynamic_market_data()
     market_cols = st.columns(4)
     
-    for i, data in enumerate(SAMPLE_MARKET_DATA):
+    for i, data in enumerate(market_data):
         with market_cols[i]:
             change_color = "🟢" if data["change_percent"] >= 0 else "🔴"
             st.metric(
@@ -290,7 +325,7 @@ def display_stocks(strategy_type, strategy_name):
     """Display stocks for a specific strategy"""
     st.subheader(f"{strategy_name} - Top Picks")
     
-    stocks = SAMPLE_STOCKS.get(strategy_type, [])
+    stocks = get_dynamic_stock_data(strategy_type)
     
     if stocks:
         # Create columns for stock cards
