@@ -57,10 +57,11 @@ Experience the platform with real market data:
 [![Streamlit Cloud](https://img.shields.io/badge/☁️_Streamlit_Cloud-Coming_Soon-FF4B4B?style=for-the-badge)](https://your-app-name.streamlit.app)
 
 **Live system features:**
-- 📊 Real-time analysis of SPY, QQQ, IWM, DIA
+- 📊 Analysis of SPY, QQQ, IWM, DIA
 - 🎯 AI-powered strategy recommendations  
-- 📈 Live stock screening across 4 strategies
+- 📈 Stock screening across 4 strategies
 - ⚖️ Confidence scoring and risk assessment
+<Dummy data used for hackathon demo purpose, live streams to be integrated later>
 
 ### **💻 Local Development**
 Run the system locally for development and testing:
