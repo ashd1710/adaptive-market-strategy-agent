@@ -8,23 +8,137 @@ import os
 import requests
 import time
 import random 
+import yfinance as yf
+import numpy as np
 
-@st.cache_data(ttl=60)  # Cache for 1 minute
+def calculate_rsi(prices, window=14):
+    """Calculate RSI (Relative Strength Index)"""
+    try:
+        delta = prices.diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+        rs = gain / loss
+        rsi = 100 - (100 / (1 + rs))
+        return rsi.iloc[-1] if not pd.isna(rsi.iloc[-1]) else 50
+    except:
+        return 50  # Default RSI if calculation fails
+
+def determine_trend(current_price, sma_20):
+    """Determine trend based on price vs moving average"""
+    try:
+        if current_price > sma_20 * 1.01:
+            return "up"
+        elif current_price < sma_20 * 0.99:
+            return "down"
+        else:
+            return "sideways"
+    except:
+        return "up"  # Default trend
+
+@st.cache_data(ttl=300)  # Cache for 5 minutes
 def get_dynamic_market_data():
-    """Make sample data change slightly to simulate live updates"""
+    """Fetch live market data from Yahoo Finance - UPDATED FUNCTION"""
+    tickers = ['SPY', 'QQQ', 'IWM', 'DIA']
     market_data = []
-    for item in SAMPLE_MARKET_DATA:
-        new_item = item.copy()
-        # Add small random changes
-        price_change = random.uniform(-2, 2)
-        new_item['price'] += price_change
-        new_item['change_percent'] += random.uniform(-0.3, 0.3)
-        new_item['rsi'] += random.uniform(-5, 5)
-        # Keep RSI in valid range
-        new_item['rsi'] = max(10, min(90, new_item['rsi']))
-        market_data.append(new_item)
     
-    return market_data
+    try:
+        print("🔄 Fetching live market data from Yahoo Finance...")
+        
+        for ticker in tickers:
+            try:
+                # Get ticker object and historical data
+                stock = yf.Ticker(ticker)
+                hist = stock.history(period="1mo", interval="1d")
+                
+                if hist.empty or len(hist) < 2:
+                    raise Exception(f"Insufficient data for {ticker}")
+                
+                # Current price (most recent close)
+                current_price = float(hist['Close'].iloc[-1])
+                
+                # Previous close for change calculation
+                prev_close = float(hist['Close'].iloc[-2])
+                change_percent = ((current_price - prev_close) / prev_close) * 100
+                
+                # Volume (most recent)
+                volume = int(hist['Volume'].iloc[-1]) if not pd.isna(hist['Volume'].iloc[-1]) else 0
+                
+                # Calculate RSI
+                rsi = calculate_rsi(hist['Close'])
+                
+                # Calculate 20-day SMA for trend
+                sma_20 = hist['Close'].rolling(window=min(20, len(hist))).mean().iloc[-1]
+                trend = determine_trend(current_price, sma_20)
+                
+                market_data.append({
+                    "symbol": ticker,
+                    "price": round(current_price, 2),
+                    "change_percent": round(change_percent, 2),
+                    "volume": volume,
+                    "rsi": round(rsi, 1),
+                    "trend": trend,
+                    "last_updated": datetime.now().strftime("%H:%M:%S"),
+                    "data_source": "live"
+                })
+                
+                print(f"✅ {ticker}: ${current_price:.2f} ({change_percent:+.2f}%)")
+                
+            except Exception as e:
+                print(f"❌ Error fetching {ticker}: {e}")
+                # Fallback to sample data for this ticker
+                fallback_data = {
+                    "symbol": ticker,
+                    "price": 500.0,  # Default price
+                    "change_percent": 0.5,
+                    "volume": 1000000,
+                    "rsi": 50.0,
+                    "trend": "up",
+                    "last_updated": "Sample",
+                    "data_source": "sample"
+                }
+                market_data.append(fallback_data)
+        
+        if market_data:
+            print(f"📊 Successfully fetched data for {len(market_data)} ETFs")
+            return market_data
+        else:
+            raise Exception("No data fetched for any ticker")
+        
+    except Exception as e:
+        print(f"❌ Yahoo Finance API error: {e}")
+        print("📦 Using sample data as fallback")
+        
+        # Return basic sample data if everything fails
+        return [
+            {"symbol": "SPY", "price": 563.45, "change_percent": 0.85, "volume": 45230000, "rsi": 61.2, "trend": "up", "last_updated": "Sample", "data_source": "sample"},
+            {"symbol": "QQQ", "price": 485.67, "change_percent": 1.25, "volume": 32180000, "rsi": 64.8, "trend": "up", "last_updated": "Sample", "data_source": "sample"},
+            {"symbol": "IWM", "price": 225.89, "change_percent": -0.45, "volume": 28450000, "rsi": 48.3, "trend": "down", "last_updated": "Sample", "data_source": "sample"},
+            {"symbol": "DIA", "price": 442.12, "change_percent": 0.65, "volume": 15670000, "rsi": 58.7, "trend": "up", "last_updated": "Sample", "data_source": "sample"}
+        ]
+
+def display_market_data_status(market_data):
+    """Display status of market data (live vs sample)"""
+    if not market_data:
+        st.error("❌ No market data available")
+        return
+    
+    # Check if we have any live data
+    live_count = sum(1 for item in market_data if item.get("data_source") == "live")
+    total_count = len(market_data)
+    
+    if live_count == total_count:
+        st.success(f"🔴 LIVE DATA - All {total_count} ETFs updated at {market_data[0]['last_updated']}")
+    elif live_count > 0:
+        st.warning(f"⚠️ MIXED DATA - {live_count}/{total_count} ETFs live, {total_count-live_count} using samples")
+    else:
+        st.info("📊 SAMPLE DATA - Yahoo Finance unavailable, using demo data")
+    
+    # Add refresh button
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("🔄 Refresh Market Data", type="primary", help="Force refresh from Yahoo Finance"):
+            st.cache_data.clear()
+            st.rerun()
 
 @st.cache_data(ttl=60)  # Cache for 1 minute  
 def get_dynamic_stock_data(strategy_type):
@@ -251,6 +365,7 @@ def main():
     # Live Market Data
     st.markdown("### 📈 Live Market Data")
     market_data = get_dynamic_market_data()
+    display_market_data_status(market_data)
     market_cols = st.columns(4)
     
     for i, data in enumerate(market_data):
