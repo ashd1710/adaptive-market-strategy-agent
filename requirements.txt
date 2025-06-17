@@ -6,4 +6,4 @@ requests
 dnspython
 yfinance
 numpy
-talib-binary
+
