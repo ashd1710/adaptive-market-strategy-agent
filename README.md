@@ -11,7 +11,7 @@
 
 ## 🎬 Live Demo & Documentation
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Try_Now-brightgreen?style=for-the-badge)](https://adaptive-market-agent-xxxxx-uc.a.run.app)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Try_Now-brightgreen?style=for-the-badge)](https://adaptive-market-agent-258209898347.us-central1.run.app)
 [![Demo Video](https://img.shields.io/badge/📺_Demo_Video-Watch_Now-red?style=for-the-badge&logo=youtube)](https://youtu.be/xXkzIxFnf0I)
 [![Streamlit App](https://img.shields.io/badge/🌟_Streamlit_App-Live_Now-FF4B4B?style=for-the-badge)](https://your-app-name.streamlit.app)
 
